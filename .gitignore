@@ -1,0 +1,26 @@
+# Dot folders
+.*
+!.gitignore
+!.github
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment files
+.env
+.venv
+env/
+venv/
+ENV/
+*.pyc
+.env.*
+!.env.example
+
+# Data directory
+/data
+
+# New additions
+.pytest_cache/
+.coverage
