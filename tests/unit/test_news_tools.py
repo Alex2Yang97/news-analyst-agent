@@ -1,4 +1,3 @@
-import pytest
 from news_analyst_agent.tools.ddg_search import ddg_search
 from news_analyst_agent.tools.yfinance_news import yf_tool
 

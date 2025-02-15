@@ -1,19 +1,19 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
 from datetime import datetime
-from news_analyst_agent.api.retrieve_db import router
+
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from news_analyst_agent.tasks.cleanup import cleanup_orphaned_threads
+from fastapi import FastAPI
 from loguru import logger
-from news_analyst_agent.api import health, retrieve_db, chat_agent
+
+from news_analyst_agent.api import chat_agent, health, retrieve_db
+from news_analyst_agent.tasks.cleanup import cleanup_orphaned_threads
 
 # Initialize scheduler
 scheduler = AsyncIOScheduler()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Lifespan manager for the FastAPI application.
+    """Lifespan manager for the FastAPI application.
     Handles startup and shutdown events.
     """
     try:

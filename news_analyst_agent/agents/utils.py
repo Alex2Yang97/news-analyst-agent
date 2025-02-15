@@ -1,21 +1,12 @@
 import operator
-from langchain_core.messages import HumanMessage, BaseMessage
-
-from typing import Annotated, Any, Dict, Sequence, TypedDict
-from enum import Enum
-import json
-import pandas as pd
-import numpy as np
 import time
+from enum import Enum
+from typing import Annotated, Any, Dict, Sequence, TypedDict
 
-import yfinance as yf
-import pandas as pd
-import numpy as np
-from typing import Dict, List, Tuple, Optional
-
+from langchain_core.messages import BaseMessage
 from langchain_core.tools import BaseTool
-from langchain_openai import ChatOpenAI
 from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 
 
 class ModelName(str, Enum):
@@ -25,9 +16,7 @@ class ModelName(str, Enum):
 
 
 def get_llm(model_name: ModelName, tools: list[BaseTool] = None, temperature: float = 0):
-    if model_name == ModelName.GPT_4_O_MINI:
-        model = ChatOpenAI(model=model_name, temperature=temperature)
-    elif model_name == ModelName.GPT_4_O:
+    if model_name == ModelName.GPT_4_O_MINI or model_name == ModelName.GPT_4_O:
         model = ChatOpenAI(model=model_name, temperature=temperature)
     elif model_name == ModelName.LLAMA_3_2:
         model = ChatOllama(model=model_name, temperature=temperature)

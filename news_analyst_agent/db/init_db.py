@@ -1,7 +1,6 @@
-import asyncio
 from news_analyst_agent.db.database import sync_engine
 from news_analyst_agent.db.models import Base
-from news_analyst_agent.config import get_settings
+
 
 def init_db():
     """Initialize the database tables"""

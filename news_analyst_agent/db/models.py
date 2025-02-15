@@ -1,7 +1,8 @@
-from sqlalchemy import Column, String, Integer, Boolean, JSON, ForeignKey, ARRAY, UUID
+import uuid
+
+from sqlalchemy import ARRAY, JSON, UUID, Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-import uuid
 
 Base = declarative_base()
 

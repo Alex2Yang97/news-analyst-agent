@@ -1,7 +1,9 @@
-from fastapi import HTTPException, Depends
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
-import secrets
 import os
+import secrets
+
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+
 from ..config import get_settings
 
 security = HTTPBasic()

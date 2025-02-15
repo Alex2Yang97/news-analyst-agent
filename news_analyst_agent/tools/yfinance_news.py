@@ -1,14 +1,13 @@
 from typing import Iterable, Optional, Type
-from loguru import logger
 
+from langchain_community.document_loaders.web_base import WebBaseLoader
 from langchain_core.callbacks import CallbackManagerForToolRun
 from langchain_core.documents import Document
 from langchain_core.tools import BaseTool
+from loguru import logger
 from pydantic import BaseModel, Field
 from requests.exceptions import HTTPError, ReadTimeout
 from urllib3.exceptions import ConnectionError
-
-from langchain_community.document_loaders.web_base import WebBaseLoader
 
 
 class YahooFinanceNewsInput(BaseModel):

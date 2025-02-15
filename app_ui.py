@@ -1,54 +1,23 @@
 # At the top of app.py
-import sys
 import os
+import sys
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from datetime import datetime
-from langchain_openai import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate
-from langchain.schema import StrOutputParser
-from langchain.schema.runnable import Runnable
-from langchain.schema.runnable.config import RunnableConfig
-from typing import cast
 
 import chainlit as cl
 from chainlit.data.sql_alchemy import SQLAlchemyDataLayer
-
-from typing import Literal, Dict
-from langchain_core.tools import tool
-from langchain_openai import ChatOpenAI
-from langgraph.prebuilt import ToolNode
-from langchain.schema.runnable.config import RunnableConfig
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
-
-import chainlit as cl
-from chainlit.types import ThreadDict
 from chainlit.types import (
-    Feedback,
-    PageInfo,
-    PaginatedResponse,
-    Pagination,
     ThreadDict,
-    ThreadFilter,
 )
-
-from news_analyst_agent.agents.utils import get_llm, ModelName
-from news_analyst_agent.agents.news_agent import NewsAnalystAgent
-
-from news_analyst_agent.db.models import Thread, Step
-from news_analyst_agent.db.database import AsyncSessionLocal
-
-from typing import Annotated
-from typing_extensions import TypedDict
-
-from langgraph.graph import END, StateGraph, START
-from langgraph.graph.message import MessagesState
-
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.dialects.postgresql import insert
 
-import uuid
+from news_analyst_agent.agents.news_agent import NewsAnalystAgent
+from news_analyst_agent.db.database import AsyncSessionLocal
+from news_analyst_agent.db.models import Thread
 
 SQLALCHEMY_DATABASE_URL = os.getenv("ASYNC_DATABASE_URL")
 
@@ -149,14 +118,14 @@ async def on_chat_start():
 
 
 async def get_thread_steps(thread_id: str):
-    """
-    Retrieve steps for a given thread from the database.
+    """Retrieve steps for a given thread from the database.
     
     Args:
         thread_id: The UUID of the thread
         
     Returns:
         List of Step objects for the thread
+
     """
     engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
     async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
@@ -171,8 +140,7 @@ async def get_thread_steps(thread_id: str):
 
 @cl.on_message
 async def on_message(message: cl.Message):
-    """
-    This function is called every time a user inputs a message in the UI.
+    """This function is called every time a user inputs a message in the UI.
     It sends back an intermediate response from the tool, followed by the final answer.
 
     Args:
@@ -180,8 +148,8 @@ async def on_message(message: cl.Message):
 
     Returns:
         None.
-    """
 
+    """
     input_lst = [HumanMessage(content=message.content)]
 
     chat_profile = cl.user_session.get("chat_profile")

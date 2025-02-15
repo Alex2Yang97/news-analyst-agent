@@ -1,8 +1,10 @@
+import base64
+
 import pytest
 from httpx import ASGITransport, AsyncClient
-from news_analyst_agent.main import app
+
 from news_analyst_agent.agents.utils import ModelName
-import base64
+from news_analyst_agent.main import app
 
 # Mock auth credentials for testing
 TEST_USERNAME = "admin"

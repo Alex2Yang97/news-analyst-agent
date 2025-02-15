@@ -1,13 +1,13 @@
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
-from uuid import UUID
+from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
 from loguru import logger
+from pydantic import BaseModel
 
-from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 from news_analyst_agent.agents.news_agent import NewsAnalystAgent
-from news_analyst_agent.api.auth import verify_admin
 from news_analyst_agent.agents.utils import ModelName
+from news_analyst_agent.api.auth import verify_admin
 
 router = APIRouter()
 
@@ -90,8 +90,7 @@ async def chat(
                 messages=result,
                 news=lg_result["metadata"]["news"]
             )
-        else:
-            return StreamingResponse(agent.astream(lg_msg_lst, json_mode=True))
+        return StreamingResponse(agent.astream(lg_msg_lst, json_mode=True))
 
     except Exception as e:
         logger.error(f"Error in chat endpoint: {str(e)}")

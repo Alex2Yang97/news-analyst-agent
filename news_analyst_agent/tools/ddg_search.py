@@ -1,14 +1,11 @@
-import json
-from loguru import logger
-from typing import Any, List, Iterable, Literal, Optional, Type, Union
+from typing import Iterable, List, Literal, Optional, Type
 
+from langchain_community.utilities.duckduckgo_search import DuckDuckGoSearchAPIWrapper
 from langchain_core.callbacks import CallbackManagerForToolRun
 from langchain_core.documents import Document
 from langchain_core.tools import BaseTool
+from loguru import logger
 from pydantic import BaseModel, Field
-
-from langchain_community.utilities.duckduckgo_search import DuckDuckGoSearchAPIWrapper
-from langchain_community.document_loaders.web_base import WebBaseLoader
 
 
 class DDGInput(BaseModel):
@@ -19,7 +16,8 @@ class DDGInput(BaseModel):
 
 class DuckDuckGoSearchResults(BaseTool):  # type: ignore[override, override]
     """Tool that queries the DuckDuckGo search API and
-    returns the results in `output_format`."""
+    returns the results in `output_format`.
+    """
 
     name: str = "duckduckgo_results_json"
     description: str = (

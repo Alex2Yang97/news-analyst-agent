@@ -1,21 +1,30 @@
-from loguru import logger
 import json
-from uuid import uuid4
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from itertools import chain
 from typing import Annotated, List, Set
+from uuid import uuid4
 
+from langchain_core.messages import AIMessage, SystemMessage, ToolMessage
 from langchain_core.messages.base import BaseMessage
-from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage, AIMessage
 from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import tool
-from langgraph.graph import StateGraph, END
+from langgraph.graph import END, StateGraph
+from loguru import logger
 
-from news_analyst_agent.agents.news_analyst_prompts import ARG_QUERY_PROMPT, ARG_ENTITIES_PROMPT, NEWS_ANALYST_AGENT_SYSTEM_PROMPT
-from news_analyst_agent.agents.utils import NewsAnalystState, get_llm, ModelName, retry_with_backoff
-from news_analyst_agent.tools.yfinance_news import yf_tool
+from news_analyst_agent.agents.news_analyst_prompts import (
+    ARG_ENTITIES_PROMPT,
+    ARG_QUERY_PROMPT,
+    NEWS_ANALYST_AGENT_SYSTEM_PROMPT,
+)
+from news_analyst_agent.agents.utils import (
+    ModelName,
+    NewsAnalystState,
+    get_llm,
+    retry_with_backoff,
+)
 from news_analyst_agent.tools.ddg_search import ddg_search
+from news_analyst_agent.tools.yfinance_news import yf_tool
 
 
 @tool
@@ -114,7 +123,6 @@ class NewsAnalystAgent:
         
     def node_chat_with_user(self, state: NewsAnalystState) -> dict:
         """Tool for chatting with user. Only for llama3.2"""
-
         tool_call = state["messages"][-1].tool_calls
         for tool in tool_call:
             if tool["name"] == "chat_with_user":
@@ -195,10 +203,9 @@ class NewsAnalystAgent:
                         yield {"news": eval(streaming_msg.content)}
                     if isinstance(streaming_msg, AIMessage):
                         yield {"chunk": streaming_msg.content}
-            else:
-                if streaming_msg.content:
-                    if isinstance(streaming_msg, ToolMessage):
-                        yield json.dumps({"news": eval(streaming_msg.content)})
-                    if isinstance(streaming_msg, AIMessage):
-                        yield json.dumps({"chunk": streaming_msg.content})
+            elif streaming_msg.content:
+                if isinstance(streaming_msg, ToolMessage):
+                    yield json.dumps({"news": eval(streaming_msg.content)})
+                if isinstance(streaming_msg, AIMessage):
+                    yield json.dumps({"chunk": streaming_msg.content})
     

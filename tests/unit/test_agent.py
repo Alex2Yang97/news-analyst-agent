@@ -1,7 +1,9 @@
 import pytest
-from news_analyst_agent.agents.news_agent import NewsAnalystAgent
 from langchain_core.messages import HumanMessage
+
+from news_analyst_agent.agents.news_agent import NewsAnalystAgent
 from news_analyst_agent.agents.utils import ModelName
+
 
 @pytest.mark.asyncio
 async def test_news_analyst_invoke_tools():

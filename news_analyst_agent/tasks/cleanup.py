@@ -1,13 +1,14 @@
 from datetime import datetime, timedelta
-from sqlalchemy import select, delete, or_, and_
-from sqlalchemy.ext.asyncio import AsyncSession
-from news_analyst_agent.db.models import Thread
-from news_analyst_agent.db.database import AsyncSessionLocal
+
 from loguru import logger
+from sqlalchemy import and_, delete, or_
+
+from news_analyst_agent.db.database import AsyncSessionLocal
+from news_analyst_agent.db.models import Thread
+
 
 async def cleanup_orphaned_threads():
-    """
-    Delete threads that don't have a userIdentifier and are older than 24 hours
+    """Delete threads that don't have a userIdentifier and are older than 24 hours
     """
     try:
         async with AsyncSessionLocal() as session:

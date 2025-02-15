@@ -1,18 +1,13 @@
-import json
-from loguru import logger
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from typing import List, Optional
-from pydantic import BaseModel
+from typing import List
 from uuid import UUID
 
-from langchain_core.messages.base import BaseMessage
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from news_analyst_agent.db.database import get_db
-from news_analyst_agent.db.models import User, Thread, Step, Feedback
 from news_analyst_agent.api.auth import verify_admin
+from news_analyst_agent.db.database import get_db
+from news_analyst_agent.db.models import Feedback, Step, Thread
 
 router = APIRouter()
 

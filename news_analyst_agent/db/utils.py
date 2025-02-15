@@ -1,5 +1,6 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
+
 
 async def check_db_connection(session: AsyncSession) -> bool:
     """Check if database connection is working"""
