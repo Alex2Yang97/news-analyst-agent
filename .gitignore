@@ -24,3 +24,7 @@ ENV/
 # New additions
 .pytest_cache/
 .coverage
+
+# Notebooks
+/notebooks/
+*.ipynb
