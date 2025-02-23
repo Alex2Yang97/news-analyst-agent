@@ -18,12 +18,13 @@ from sqlalchemy.orm import sessionmaker
 from news_analyst_agent.agents.news_agent import NewsAnalystAgent
 from news_analyst_agent.db.database import AsyncSessionLocal
 from news_analyst_agent.db.models import Thread
+from news_analyst_agent.config import get_settings
 
-SQLALCHEMY_DATABASE_URL = os.getenv("ASYNC_DATABASE_URL")
+settings = get_settings()
 
 @cl.data_layer
 def get_data_layer():
-    return SQLAlchemyDataLayer(conninfo=SQLALCHEMY_DATABASE_URL, storage_provider=None)
+    return SQLAlchemyDataLayer(conninfo=settings.ASYNC_DATABASE_URL, storage_provider=None)
 
 
 @cl.password_auth_callback
@@ -103,7 +104,7 @@ async def on_chat_resume(thread: ThreadDict):
 async def on_chat_start():
     # Ensure Thread exists
     # This is a workaround for the fact that sometimes the thread is not created. Should be a bug in chainlit.
-    engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
+    engine = create_async_engine(settings.ASYNC_DATABASE_URL)
     async_session = sessionmaker(
         engine, class_=AsyncSession, expire_on_commit=False)
     async with AsyncSessionLocal() as session:
@@ -127,7 +128,7 @@ async def get_thread_steps(thread_id: str):
         List of Step objects for the thread
 
     """
-    engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
+    engine = create_async_engine(settings.ASYNC_DATABASE_URL)
     async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
     
     async with async_session() as session:

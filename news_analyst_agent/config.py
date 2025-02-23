@@ -8,20 +8,33 @@ from pydantic_settings import BaseSettings
 load_dotenv()
 
 class Settings(BaseSettings):
-    # Database URLs
-    DATABASE_URL: str = "postgresql://news_analyst:news_analyst_password@localhost:5432/news_analyst_db"
-    ASYNC_DATABASE_URL: str = "postgresql+asyncpg://news_analyst:news_analyst_password@localhost:5432/news_analyst_db"
-    
-    # Security settings
-    SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key")
-    ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
+    # Database settings
+    POSTGRES_USER: str = "news_analyst"
+    POSTGRES_PASSWORD: str = "news_analyst_password"
+    POSTGRES_SERVER: str = "localhost"
+    POSTGRES_DB: str = "app"
     
     # API Keys
-    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+    OPENAI_API_KEY: str
+    
+    # LangChain settings
+    LANGCHAIN_TRACING_V2: bool = False
+    LANGCHAIN_API_KEY: str | None = None
+    
+    # Admin credentials
+    ADMIN_USERNAME: str = "admin"
+    ADMIN_PASSWORD: str = "admin"
     
     # Chainlit settings
-    CHAINLIT_AUTH_SECRET: str = os.getenv("CHAINLIT_AUTH_SECRET", "")
+    CHAINLIT_AUTH_SECRET: str | None = None
+
+    @property
+    def DATABASE_URL(self) -> str:
+        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:5432/{self.POSTGRES_DB}"
+
+    @property
+    def ASYNC_DATABASE_URL(self) -> str:
+        return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:5432/{self.POSTGRES_DB}"
 
     class Config:
         env_file = ".env"

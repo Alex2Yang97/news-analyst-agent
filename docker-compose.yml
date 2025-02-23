@@ -3,20 +3,76 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15
-    container_name: news_analyst_db
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:-news_analyst}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-news_analyst_password}
+      POSTGRES_DB: ${POSTGRES_DB:-app}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U news_analyst"]
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - news_analyst_network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: news_analyst_api
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - news_analyst_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    command: sh -c "/app/run_migrations.sh && uvicorn news_analyst_agent.main:app --host 0.0.0.0 --port 8080"
+
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    container_name: news_analyst_ui
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - news_analyst_network
+    command: >
+      sh -c '
+        python -m chainlit run app_ui.py --port 8000 --host 0.0.0.0
+      '
+
+networks:
+  news_analyst_network:
+    name: news_analyst_network
 
 volumes:
   postgres_data:

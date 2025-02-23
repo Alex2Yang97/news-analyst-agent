@@ -27,11 +27,20 @@ async def lifespan(app: FastAPI):
         )
         scheduler.start()
         logger.info("Started background cleanup task scheduler")
+        
+        # Add startup log
+        logger.info("Application startup complete")
         yield
+    except Exception as e:
+        logger.error(f"Error during startup: {e}")
+        raise
     finally:
         # Shutdown: Clean up resources
-        scheduler.shutdown()
-        logger.info("Shut down cleanup task scheduler")
+        try:
+            scheduler.shutdown()
+            logger.info("Shut down cleanup task scheduler")
+        except Exception as e:
+            logger.error(f"Error during shutdown: {e}")
 
 app = FastAPI(title="News Analyst API", lifespan=lifespan)
 
